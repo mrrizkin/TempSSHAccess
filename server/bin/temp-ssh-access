@@ -1,0 +1,45 @@
+#!/bin/bash
+# /usr/local/bin/temp-ssh-access
+
+# Source required libraries
+source /etc/temp-ssh-access/temp_ssh.conf
+source /usr/local/lib/temp-ssh-access/user_management.sh
+source /usr/local/lib/temp-ssh-access/token_generator.sh
+
+# Help function
+show_help() {
+    echo "Temporary SSH Access Management"
+    echo "Usage:"
+    echo "  temp-ssh-access create [host] [port] [hours]  - Create temporary access"
+    echo "  temp-ssh-access list                          - List active temp users"
+    echo "  temp-ssh-access remove <username>             - Remove a temp user"
+    echo "  temp-ssh-access help                          - Show this help"
+}
+
+# Main command router
+main() {
+    local action=$1
+    shift
+
+    case $action in
+        create)
+            generate_access_token "$@"
+            ;;
+        list)
+            get_temp_users
+            ;;
+        remove)
+            remove_temp_user "$1"
+            ;;
+        help)
+            show_help
+            ;;
+        *)
+            show_help
+            exit 1
+            ;;
+    esac
+}
+
+# Run the main function
+main "$@"
